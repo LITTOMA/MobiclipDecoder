@@ -394,8 +394,9 @@ namespace MobiConverter
 
         private static void ConvertMoflex(string input, string leftFile, string rightFile)
         {
-            Console.WriteLine("Moflex container detected!");
-            Console.Write("Converting: ");
+            //Console.WriteLine("Moflex container detected!");
+            //Console.Write("Converting: ");
+            int cursorLeft = Console.CursorLeft, cursorTop = Console.CursorTop;
             Console.CursorVisible = false;
             MobiclipDecoder mobiCodec = null;
 
@@ -416,6 +417,7 @@ namespace MobiConverter
 
             bool is3dVideo = false;
             bool isLeftFrame = false;
+            Bitmap lastLeftFrame = null, lastRightFrame = null;
 
             liveDemux.OnCompleteFrameReceived += delegate (MoLiveChunk Chunk, byte[] Data)
             {
@@ -437,11 +439,17 @@ namespace MobiConverter
                     {
                         if (leftVideoStream == null) leftVideoStream = leftAviManager.AddVideoStream(false, Math.Round(((double)((MoLiveStreamVideo)Chunk).FpsRate) / ((double)((MoLiveStreamVideo)Chunk).FpsScale), 3), b);
                         else leftVideoStream.AddFrame(b);
+                        lastLeftFrame = new Bitmap(b);
+
+                        if (lastRightFrame != null) rightVideoStream.AddFrame(lastRightFrame);
                     }
                     else if (is3dVideo && !isLeftFrame && rightAviManager != null)
                     {
                         if (rightVideoStream == null) rightVideoStream = rightAviManager.AddVideoStream(false, Math.Round(((double)((MoLiveStreamVideo)Chunk).FpsRate) / ((double)((MoLiveStreamVideo)Chunk).FpsScale), 3), b);
                         else rightVideoStream.AddFrame(b);
+                        lastRightFrame = new Bitmap(b);
+
+                        if (lastLeftFrame != null) leftVideoStream.AddFrame(lastLeftFrame);
                     }
 
                 }
@@ -539,8 +547,8 @@ namespace MobiConverter
                 //report progress
                 if (counter == 0)
                 {
-                    Console.Write("{0,3:D}%", inputStream.Position * 100 / inputStream.Length);
-                    Console.CursorLeft -= 4;
+                    //Console.Write("{0,3:D}%", inputStream.Position * 100 / inputStream.Length);
+                    //Console.CursorLeft = cursorLeft;
                 }
                 counter++;
                 if (counter == 50) counter = 0;
