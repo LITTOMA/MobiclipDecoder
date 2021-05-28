@@ -417,7 +417,6 @@ namespace MobiConverter
 
             bool is3dVideo = false;
             bool isLeftFrame = false;
-            Bitmap lastLeftFrame = null, lastRightFrame = null;
 
             liveDemux.OnCompleteFrameReceived += delegate (MoLiveChunk Chunk, byte[] Data)
             {
@@ -439,17 +438,11 @@ namespace MobiConverter
                     {
                         if (leftVideoStream == null) leftVideoStream = leftAviManager.AddVideoStream(false, Math.Round(((double)((MoLiveStreamVideo)Chunk).FpsRate) / ((double)((MoLiveStreamVideo)Chunk).FpsScale), 3), b);
                         else leftVideoStream.AddFrame(b);
-                        lastLeftFrame = new Bitmap(b);
-
-                        if (lastRightFrame != null) rightVideoStream.AddFrame(lastRightFrame);
                     }
                     else if (is3dVideo && !isLeftFrame && rightAviManager != null)
                     {
                         if (rightVideoStream == null) rightVideoStream = rightAviManager.AddVideoStream(false, Math.Round(((double)((MoLiveStreamVideo)Chunk).FpsRate) / ((double)((MoLiveStreamVideo)Chunk).FpsScale), 3), b);
                         else rightVideoStream.AddFrame(b);
-                        lastRightFrame = new Bitmap(b);
-
-                        if (lastLeftFrame != null) leftVideoStream.AddFrame(lastLeftFrame);
                     }
 
                 }
