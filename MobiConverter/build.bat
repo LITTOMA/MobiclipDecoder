@@ -4,6 +4,7 @@
 
 :: set your target executable name (typically [projectname].exe)
 SET APP_NAME=MobiConverter.exe
+SET APP_OUT_NAME=mobiconv.exe
 
 :: Set build, used for directory. Typically Release or Debug
 SET ILMERGE_BUILD=Release
@@ -25,7 +26,7 @@ echo Merging %APP_NAME% ...
 :: add project DLL's starting with replacing the FirstLib with this project's DLL
 "%ILMERGE_PATH%"\ILMerge.exe Bin\%ILMERGE_BUILD%\%APP_NAME%  ^
   /lib:Bin\%ILMERGE_BUILD%\ ^
-  /out:%APP_NAME% ^
+  /out:%APP_OUT_NAME% ^
   CommandLine.dll ^
   LibMobiclip.dll
 
